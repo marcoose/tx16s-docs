@@ -47,17 +47,17 @@ const App = () => {
     }
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const json = JSON.parse(e.target.result);
+          const json = JSON.parse(e.target?.result as string);
           stageRef?.current?.clear();
           fileLoad++;
           setJsonInput(json);
-          setSelectedFile('');
+          setSelectedFile("");
         } catch {
           alert("There was an error parsing your JSON file");
         }
@@ -95,22 +95,18 @@ const App = () => {
     textLabels = text.map((t, i) =>
       t ? (
         <InputLabel
-          key={i}
+          key={`text-${i}`}
           label={t.title}
           initialX={t.x}
           initialY={t.y}
           onMoved={(newPos) => {
             setJsonInput((prev) => {
-              const newText = [...(prev.text || [])];
-              newText[i] = {
-                ...newText[i],
-                x: newPos.x,
-                y: newPos.y,
-              };
-              return {
-                ...prev,
-                text: newText,
-              };
+              const newConfig = { ...prev };
+              if (newConfig.text?.[i]) {
+                newConfig.text[i].x = newPos.x;
+                newConfig.text[i].y = newPos.y;
+              }
+              return newConfig;
             });
           }}
         />
@@ -124,21 +120,31 @@ const App = () => {
         <div id="left">
           <JsonEditor
             data={jsonInput}
-            setData={setJsonInput} // optional
-            //restrictDelete={true}
-            //restrictAdd={true}
+            setData={(newJson: unknown) => {
+              setJsonInput(newJson as RadioConfig);
+            }}
             rootName="Radio Config"
-            //{ ...otherProps } />
           />
         </div>
         <div id="right">
           <div id="config">
             Load configuration:{" "}
-            <input type="file" accept=".json" onChange={handleFileChange} value={selectedFile} />
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleFileChange}
+              value={selectedFile}
+            />
           </div>
           <div id="output">
             <h2>Rendered Image</h2>
-            <Stage key={`stage_${fileLoad}`} id="preview" width={480} height={272} ref={stageRef}>
+            <Stage
+              key={`stage_${fileLoad}`}
+              id="preview"
+              width={480}
+              height={272}
+              ref={stageRef}
+            >
               <Layer>
                 <Rect x={0} y={0} width={480} height={272} fill="white" />
                 <KImage image={getRadioImage()} />
