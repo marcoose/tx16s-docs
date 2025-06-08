@@ -136,8 +136,33 @@ const App = () => {
               value={selectedFile}
             />
           </div>
+          <div id="instructions">
+            <h2>Instructions</h2>
+            <p>
+              Edit JSON directly in the left panel to change text and add/remove
+              switches and positions.
+            </p>
+            <p>
+              To move a label, click and drag it to the desired position (this
+              updates the JSON coordinates for you).
+            </p>
+            <p>
+              Save your JSON by copying to clipboard via button beside the top
+              node, and pasting to a text file. Existing JSON can be loaded with
+              button above.
+            </p>
+            <p>
+              To save the rendered image, click the "Save Image" button below
+              the preview.
+            </p>
+            <p>
+              See{" "}
+              <a href="https://github.com/marcoose/tx16s-docs">
+                https://github.com/marcoose/tx16s-docs
+              </a>
+            </p>
+          </div>
           <div id="output">
-            <h2>Rendered Image</h2>
             <Stage
               key={`stage_${fileLoad}`}
               id="preview"
